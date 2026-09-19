@@ -1,6 +1,8 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from app.models.report_model import Report
+# pyrefly: ignore [missing-import]
+from app.exceptions.report_exceptions import ReportNotFoundException
 
 
 def create_report(db: Session, title: str, description: str, location: str):
@@ -25,10 +27,7 @@ def get_report_by_id(db: Session, report_id: int):
     report = db.query(Report).filter(Report.id == report_id).first()
 
     if report is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Report not found"
-        )
+        raise ReportNotFoundException()
 
     return report
 

@@ -20,3 +20,4 @@ class ReportResponse(BaseModel):
     location: str
 
     model_config = ConfigDict(from_attributes=True)
+    

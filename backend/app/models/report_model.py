@@ -14,3 +14,4 @@ class Report(Base):
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(String(500), nullable=False)
     location: Mapped[str] = mapped_column(String(100), nullable=False)
+    severity: Mapped[str] = mapped_column(String(20), nullable=False, default="MEDIUM")
