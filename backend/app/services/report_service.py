@@ -1,3 +1,4 @@
+from app.services.ai_service import classify_report
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from app.models.report_model import Report
@@ -6,10 +7,18 @@ from app.exceptions.report_exceptions import ReportNotFoundException
 
 
 def create_report(db: Session, title: str, description: str, location: str):
+
+    # AI classification
+    ai_result = classify_report(description)
+
     report = Report(
         title=title,
         description=description,
-        location=location
+        location=location,
+        category=ai_result.category,
+        severity=ai_result.severity,
+        priority=ai_result.priority,
+        summary=ai_result.summary
     )
 
     db.add(report)

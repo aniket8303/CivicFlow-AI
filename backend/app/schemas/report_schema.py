@@ -18,6 +18,10 @@ class ReportResponse(BaseModel):
     title: str
     description: str
     location: str
+    category: str
+    severity: str
+    priority: str
+    summary: str
 
     model_config = ConfigDict(from_attributes=True)
     
