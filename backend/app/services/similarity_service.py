@@ -27,7 +27,8 @@ def find_similar_reports(
 
 def check_duplicate_report(
     db: Session,
-    embedding: list[float]
+    embedding: list[float],
+    threshold: float = 0.20
 ):
     results = find_similar_reports(
         db=db,
@@ -36,13 +37,19 @@ def check_duplicate_report(
     )
 
     if not results:
-        return None
+        return {
+            "is_duplicate": False,
+            "message": "No existing reports found."
+        }
 
     report, distance = results[0]
 
+    distance = float(distance)
+
     return {
+        "is_duplicate": distance <= threshold,
         "report_id": report.id,
         "title": report.title,
-        "distance": float(distance),
-        "is_similar": float(distance) <= SIMILARITY_THRESHOLD
+        "distance": distance,
+        "threshold": threshold
     }

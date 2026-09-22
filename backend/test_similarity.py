@@ -1,30 +1,22 @@
 from app.database.database import SessionLocal
-
 from app.services.embedding_service import generate_embedding
-from app.services.similarity_service import find_similar_reports
+from app.services.similarity_service import check_duplicate_report
 
 
-text = "There is a water pipeline leak near Ward 5."
+text = "There is a large pothole on the main road near the bus stop."
 
 embedding = generate_embedding(text)
 
 db = SessionLocal()
 
 try:
-    results = find_similar_reports(
+    result = check_duplicate_report(
         db=db,
-        embedding=embedding,
-        limit=5
+        embedding=embedding
     )
 
-    print("\nSimilar reports:")
-
-    for report, distance in results:
-        print(
-            f"ID: {report.id} | "
-            f"Title: {report.title} | "
-            f"Distance: {distance:.4f}"
-        )
+    print("\n===== DUPLICATE CHECK =====")
+    print(result)
 
 finally:
     db.close()
