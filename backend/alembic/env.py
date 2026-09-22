@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 from app.database.database import Base
 from app.models.report_model import Report
+from app.models.report_model import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

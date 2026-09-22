@@ -4,12 +4,14 @@ from sqlalchemy.orm import Session
 from app.models.report_model import Report
 # pyrefly: ignore [missing-import]
 from app.exceptions.report_exceptions import ReportNotFoundException
+from app.services.embedding_service import generate_embedding
 
 
 def create_report(db: Session, title: str, description: str, location: str):
 
-    # AI classification
     ai_result = classify_report(description)
+
+    embedding = generate_embedding(description)
 
     report = Report(
         title=title,
@@ -18,7 +20,8 @@ def create_report(db: Session, title: str, description: str, location: str):
         category=ai_result.category,
         severity=ai_result.severity,
         priority=ai_result.priority,
-        summary=ai_result.summary
+        summary=ai_result.summary,
+        embedding=embedding
     )
 
     db.add(report)
