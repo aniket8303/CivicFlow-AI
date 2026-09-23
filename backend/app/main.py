@@ -2,9 +2,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import report_router
+from app.routers import dashboard_router
+
 from app.database import database
 from app.routers.similarity_router import router as similarity_router
 from app.routers.rag_router import router as rag_router
+from app.routers.analytics_router import router as analytics_router
+from app.routers.incident_router import router as incident_router
 
 
 app = FastAPI()
@@ -24,8 +28,11 @@ app.include_router(
     report_router.router,
     prefix="/api"
 )
+app.include_router(dashboard_router.router, prefix="/api")
+app.include_router(incident_router, prefix="/api")
 app.include_router(similarity_router, prefix="/api")
 app.include_router(rag_router, prefix="/api")
+app.include_router(analytics_router)
 
 @app.get("/api/health")
 def health_check():

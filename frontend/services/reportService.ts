@@ -1,58 +1,41 @@
 import { Report } from "@/types/report";
-
-const API_URL = "http://127.0.0.1:8000";
+import { fetchWithFallback } from "./apiClient";
+import { DEMO_REPORTS } from "./demoData";
 
 export async function getReports(): Promise<Report[]> {
-    const response = await fetch(`${API_URL}/api/reports`, {
-        cache: "no-store",
-    });
-
-    if (!response.ok) {
-        throw new Error("Failed to fetch reports");
-    }
-
-    return response.json();
+    return fetchWithFallback<Report[]>("/reports", { cache: "no-store" }, DEMO_REPORTS);
 }
 
-export async function updateReport(
-    reportId: number,
-    report: {
-        title: string;
-        description: string;
-        location: string;
+export async function createReport(reportData: { title: string; description: string; location: string; latitude: number; longitude: number; }): Promise<any> {
+    try {
+        return await fetchWithFallback("/reports", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(reportData)
+        }, null);
+    } catch (e) {
+        // Fallback demo submission logic
+        await new Promise(r => setTimeout(r, 2000));
+        return {
+            id: 999,
+            ...reportData,
+            category: "Water",
+            severity: "High",
+            priority: "P1",
+            summary: "AI simulated summary for demo mode.",
+            incident_id: 2048,
+        };
     }
-) {
-    const response = await fetch(
-        `${API_URL}/api/reports/${reportId}`,
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(report),
-        }
-    );
-
-    if (!response.ok) {
-        throw new Error("Failed to update report");
-    }
-
-    return response.json();
 }
 
-export async function deleteReport(
-    reportId: number
-) {
-    const response = await fetch(
-        `${API_URL}/api/reports/${reportId}`,
-        {
-            method: "DELETE",
-        }
-    );
+export async function updateReport(reportId: number, report: any) {
+    return fetchWithFallback(`/reports/${reportId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(report)
+    }, report);
+}
 
-    if (!response.ok) {
-        throw new Error("Failed to delete report");
-    }
-
-    return response.json();
+export async function deleteReport(reportId: number) {
+    return fetchWithFallback(`/reports/${reportId}`, { method: "DELETE" }, { success: true });
 }

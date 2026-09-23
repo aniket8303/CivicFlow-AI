@@ -1,98 +1,75 @@
 import Navbar from "@/components/Navbar";
-import ReportCard from "@/components/ReportCard";
-import ReportForm from "@/components/ReportForm";
-import { getReports } from "@/services/reportService";
 import Footer from "@/components/Footer";
+import Link from "next/link";
 
-export default async function Home() {
-  const reports = await getReports();
+export default function Home() {
+    return (
+        <div className="min-h-screen bg-slate-50 flex flex-col">
+            <Navbar />
 
-  return (
-    <div className="min-h-screen bg-slate-50">
-      <Navbar />
+            <main className="flex-1 flex flex-col items-center justify-center text-center px-6 py-20 relative overflow-hidden">
+                <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-slate-50 to-slate-50 opacity-50"></div>
 
-      <main className="mx-auto max-w-7xl px-6 py-10">
+                <div className="max-w-4xl">
+                    <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100/50 text-blue-700 text-sm font-semibold tracking-wide border border-blue-200">
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                        </span>
+                        CIVIC INTELLIGENCE PLATFORM
+                    </div>
 
-        {/* Hero Section */}
-        <section className="mb-10">
-          <div className="max-w-3xl">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-blue-600">
-              Civic Intelligence Platform
-            </p>
+                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-8">
+                        Turn citizen reports into <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">actionable city intelligence.</span>
+                    </h1>
 
-            <h1 className="text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
-              Report civic issues.
-              <br />
-              Improve your community.
-            </h1>
+                    <p className="text-xl md:text-2xl text-slate-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+                        CivicFlow-AI uses AI, semantic similarity and operational analytics to transform unstructured civic reports into prioritized, deduplicated and actionable incidents.
+                    </p>
 
-            <p className="mt-4 text-lg leading-8 text-slate-600">
-              CivicFlow-AI helps citizens report local issues and
-              provides a foundation for intelligent civic issue
-              management.
-            </p>
-          </div>
-        </section>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <Link 
+                            href="/citizen/report" 
+                            className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 transition-all active:scale-95 text-lg"
+                        >
+                            Report an Issue
+                        </Link>
+                        <Link 
+                            href="/login" 
+                            className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-50 text-slate-900 font-bold rounded-xl shadow-sm border border-slate-200 transition-all active:scale-95 text-lg"
+                        >
+                            Explore Dashboard
+                        </Link>
+                    </div>
+                </div>
 
-        {/* Report Form */}
-        <section
-          id="report-form"
-          className="mb-12 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
-        >
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-slate-900">
-              Report a Civic Issue
-            </h2>
+                <div className="mt-20 w-full max-w-5xl">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-left">
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                            <div className="text-2xl mb-3">📝</div>
+                            <h3 className="font-bold text-slate-900 text-lg mb-2">Citizen Report</h3>
+                            <p className="text-slate-600 text-sm">Citizens report issues with descriptions and locations.</p>
+                        </div>
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative">
+                            <div className="text-2xl mb-3">🧠</div>
+                            <h3 className="font-bold text-slate-900 text-lg mb-2">AI Analysis</h3>
+                            <p className="text-slate-600 text-sm">AI classifies, summarizes, and detects semantic duplicates.</p>
+                        </div>
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                            <div className="text-2xl mb-3">⚡</div>
+                            <h3 className="font-bold text-slate-900 text-lg mb-2">Incident Intelligence</h3>
+                            <p className="text-slate-600 text-sm">Reports are clustered into prioritized operational incidents.</p>
+                        </div>
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                            <div className="text-2xl mb-3">🏢</div>
+                            <h3 className="font-bold text-slate-900 text-lg mb-2">Municipal Action</h3>
+                            <p className="text-slate-600 text-sm">Routed directly to the correct department for resolution.</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
 
-            <p className="mt-1 text-sm text-slate-500">
-              Tell us about an issue in your area.
-            </p>
-          </div>
-
-          <ReportForm />
-        </section>
-
-        {/* Reports */}
-        <section id="reports">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-900">
-                Civic Reports
-              </h2>
-
-              <p className="mt-1 text-sm text-slate-500">
-                Recently submitted community issues
-              </p>
-            </div>
-
-            <span className="rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700">
-              {reports.length} Reports
-            </span>
-          </div>
-
-          {reports.length === 0 ? (
-            <div className="rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-slate-200">
-              <h3 className="text-lg font-semibold text-slate-900">
-                No reports yet
-              </h3>
-
-              <p className="mt-2 text-sm text-slate-500">
-                Be the first person to report a civic issue.
-              </p>
-            </div>
-          ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {reports.map((report) => (
-                <ReportCard
-                  key={report.id}
-                  report={report}
-                />
-              ))}
-            </div>
-          )}
-        </section>
-      </main>
-      <Footer />
-    </div>
-  );
+            <Footer />
+        </div>
+    );
 }

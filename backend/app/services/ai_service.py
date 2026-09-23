@@ -1,3 +1,4 @@
+import time
 import os
 from dotenv import load_dotenv
 from google import genai
@@ -11,7 +12,6 @@ load_dotenv()
 client = genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
 )
-
 
 def classify_report(complaint: str) -> AIReportResponse:
 
@@ -44,22 +44,33 @@ Citizen complaint:
 {complaint}
 """
 
-    try:
-        response = client.models.generate_content(
-            model="gemini-3.5-flash-lite",
-            contents=prompt,
-            config={
-                "response_mime_type": "application/json",
-                "response_schema": AIReportResponse,
-            },
-        )
+    max_retries = 3
 
-        return AIReportResponse.model_validate_json(response.text)
+    for attempt in range(max_retries):
 
-    except Exception as e:
-        print("Gemini API error:", e)
+        try:
+            response = client.models.generate_content(
+                model="gemini-3.5-flash-lite",
+                contents=prompt,
+                config={
+                    "response_mime_type": "application/json",
+                    "response_schema": AIReportResponse,
+                },
+            )
 
-        raise HTTPException(
-            status_code=503,
-            detail="AI service is temporarily unavailable. Please try again later."
-        )
+            return AIReportResponse.model_validate_json(response.text)
+
+        except Exception as e:
+
+            print(f"Gemini API error (attempt {attempt + 1}/{max_retries}):", e)
+
+            if attempt < max_retries - 1:
+                wait_time = 2 ** attempt
+                print(f"Retrying in {wait_time} seconds...")
+                time.sleep(wait_time)
+
+            else:
+                raise HTTPException(
+                    status_code=503,
+                    detail="AI service is temporarily unavailable. Please try again later."
+                )

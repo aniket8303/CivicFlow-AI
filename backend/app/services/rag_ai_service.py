@@ -1,9 +1,9 @@
 import os
+import time
 
 from dotenv import load_dotenv
 from google import genai
-
-from app.schemas.ai_schema import AIReportResponse
+from fastapi import HTTPException
 
 load_dotenv()
 
@@ -39,9 +39,40 @@ User Question:
 Provide a concise and clear answer.
 """
 
-    response = client.models.generate_content(
-        model="gemini-3.5-flash-lite",
-        contents=prompt
-    )
+    max_retries = 3
 
-    return response.text
+    for attempt in range(max_retries):
+
+        try:
+            response = client.models.generate_content(
+                model="gemini-3.5-flash-lite",
+                contents=prompt
+            )
+
+            return response.text
+
+        except Exception as e:
+
+            print(
+                f"Gemini RAG error "
+                f"(attempt {attempt + 1}/{max_retries}):",
+                e
+            )
+
+            if attempt < max_retries - 1:
+
+                wait_time = 2 ** attempt
+
+                print(
+                    f"Retrying RAG generation "
+                    f"in {wait_time} seconds..."
+                )
+
+                time.sleep(wait_time)
+
+            else:
+
+                raise HTTPException(
+                    status_code=503,
+                    detail="RAG AI service is temporarily unavailable. Please try again later."
+                )

@@ -1,8 +1,8 @@
-from sqlalchemy import Integer, String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import Integer, String, Float
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 # pyrefly: ignore [missing-import]
 from pgvector.sqlalchemy import Vector
-
+from sqlalchemy import ForeignKey
 
 class Base(DeclarativeBase):
     pass
@@ -30,6 +30,16 @@ class Report(Base):
     location: Mapped[str] = mapped_column(
         String(100),
         nullable=False
+    )
+
+    latitude: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True
+    )
+
+    longitude: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True
     )
 
     category: Mapped[str] = mapped_column(
@@ -60,3 +70,11 @@ class Report(Base):
         Vector(768),
         nullable=True
     )
+
+    incident_id: Mapped[int | None] = mapped_column(
+        Integer,
+        ForeignKey("incidents.id"),
+        nullable=True
+    )
+    
+    incident = relationship("Incident", back_populates="reports")
